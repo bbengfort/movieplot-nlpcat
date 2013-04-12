@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+    <div class="row">
+        <div class="span3 center">
+            {% if movie.poster %}
+            <img src="{{ movie.poster.url }}" />
+            {% else %}
+            <img src="/static/img/noposter.jpg" />
+            {% endif %}
+        </div>
+        <div class="span9">
+            <h3 class="movie-title">{{ movie.title|safe }} <span class="movie-year">({{ movie.year }})</span></h3>
+            <ul class="movie-meta">
+                <li class="movie-rating">{{ movie.rated }}</li>
+                <li class="movie-runtime">{{ movie.runtime }}</li>
+                <li class="sep">-</li>
+                <ul class="movie-genres">
+                    {% for genre in movie.genres.all %}
+                    <li class="genre"><span class="label label-inverse">{{ genre }}</span></li>
+                    {% if not forloop.last %}
+                    <li class="sep">&middot;</li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+                <li class="sep">-</li>
+                <li class="movie-released">{{ movie.released }}</li>
+            </ul>
+            <hr />
+            <p class="movie-simple-plot">{{ movie.plot_simple|safe }}</p>
+            <hr />
+            <dl class="dl-horizontal">
+                <dt>Director{{ movie.directors.count|pluralize }}</dt>
+                    <dd class="movie-director">{{ movie.directors.all|join:", " }}</dd>
+                <dt>Writer{{ movie.writers.count|pluralize }}</dt>
+                    <dd class="movie-writers">{{ movie.writers.all|join:", " }}</dd>
+                <dt>Cast</dt>
+                    <dd class="movie-actors">{{ movie.actors.all|join:", " }}</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="span12">
+            <h3>Plot Summary</h3>
+            <p class="movie-plot">{{ movie.plot|safe }}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="span12">
+            <div class="row">
+                <div class="span10">
+                    <h3>NGram Analysis</h3>
+                </div>
+                <div class="span2">
+                    <form class="pull-right" method="POST" action="{% url MovieAnalyze %}">
+                        <input type="hidden" name="movieid" value="{{ movie.id }}" />
+                        <input type="submit" style="margin-top: 15px;" class="btn btn-warning" value="{% if movie.ngram_analysis %}Reanalyze{% else %}Analyze{% endif %}" />
+                        {% csrf_token %}
+                    </form>
+                </div>
+            </div>
+
+            {% if movie.ngram_analysis %}
+            <div class="row">
+                <div class="span3">
+                    <h4>Unigrams</h4>
+                    <ul class="ngram-model-meta">
+                        <li>unique: <span class="frequency">{{ movie.ngram_analysis.unigram_count }}</span></li>
+                        <li>total: <span class="frequency">{{ movie.ngram_analysis.unigram_total }}</span></li>
+                    </ul>
+                    <ul class="ngram-list">
+                        {% for model in movie.ngram_analysis.unigrams %}
+                        <li><span class="ngram">{{ model.ngram }}</span><span class="pull-right">{{ model.frequency }}</span></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="span4">
+                    <h4>Bigrams</h4>
+                    <ul class="ngram-model-meta">
+                        <li>unique: <span class="frequency">{{ movie.ngram_analysis.bigram_count }}</span></li>
+                        <li>total: <span class="frequency">{{ movie.ngram_analysis.bigram_total }}</span></li>
+                    </ul>
+                    <ul class="ngram-list">
+                        {% for model in movie.ngram_analysis.bigrams %}
+                        <li><span class="ngram">{{ model.ngram }}</span><span class="pull-right">{{ model.frequency }}</span></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="span5">
+                    <h4>Trigrams</h4>
+                    <ul class="ngram-model-meta">
+                        <li>unique: <span class="frequency">{{ movie.ngram_analysis.trigram_count }}</span></li>
+                        <li>total: <span class="frequency">{{ movie.ngram_analysis.trigram_total }}</span></li>
+                    </ul>
+                    <ul class="ngram-list">
+                        {% for model in movie.ngram_analysis.trigrams %}
+                        <li><span class="ngram">{{ model.ngram }}</span><span class="pull-right">{{ model.frequency }}</span></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script type="text/javascript">
+        /*
+        RegExp.quote = function(str) {
+            return str.replace(/([\.\?\*\+\^\$\[\]\\\(\)\{\}\|\-])/g, "\\$1");
+        };
+
+        $(function() {
+
+            var $plot = $('.movie-plot');
+
+            $("ul.ngram-list li").hover(function(event) {
+                // On mouse enter
+                var $li = $(event.target);
+                var $ngram = $($li.children('span.ngram')[0]);
+                var text = $ngram.text().trim();
+                var re   = new RegExp(RegExp.quote(text), "g");
+                if (text) {
+                    console.log(text);
+                    $plot.html($plot.html().replace(re, "<strong>"+text+"</strong>"));
+                }
+
+            }, function(event){
+                // On mouse out
+            });
+
+        });
+        */
+    </script>
+{% endblock %}

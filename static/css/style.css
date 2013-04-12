@@ -1,0 +1,84 @@
+/* Stylsheet for Movies App */
+
+div#wrapper {
+    margin: 40px auto;
+}
+
+ul.movie-meta {
+    margin: 0;
+}
+
+ul.movie-meta li {
+    display: inline;
+    list-style: none;
+    margin-right: 4px;
+}
+
+ul.movie-meta ul {
+    display: inline;
+    margin: 0 8px;
+}
+
+.center {
+    text-align: center;
+}
+
+div#results {
+    margin-bottom: 80px;
+}
+
+div.result {
+    margin: 14px inherit;
+}
+
+div.result h4.movie-title {
+    margin: 0;
+    padding: 0;
+    line-height: 1em;
+}
+
+div.result a {
+    text-decoration: none;
+    color: #363636;
+    margin: 0;
+    padding: 0;
+    line-height: 1em;
+}
+
+div.result a:hover, div.result a:active {
+    text-decoration: underline;
+}
+
+div.result ul.movie-meta {
+    font-size: .92em;
+}
+
+img.movie-thumbnail {
+    max-height: 92px;
+}
+
+ul.ngram-model-meta {
+    list-style-type: none;
+    margin: -5px 0 10px 0;
+    padding: 0;
+}
+
+ul.ngram-model-meta li {
+    display: inline;
+    font-size: 1.1em;
+}
+
+ul.ngram-list {
+    list-style-type: none;
+    font-family: "Courier New" monospace;
+    margin: 0;
+    padding: 0;
+}
+
+ul.ngram-list li {
+    margin: 2px 0;
+}
+
+ul.ngram-list li:hover {
+    background-color: #d0e9c6;
+}

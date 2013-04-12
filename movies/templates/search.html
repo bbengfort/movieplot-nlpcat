@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block main %}
+    <div class="row">
+        <div class="span12 center">
+            <h2>Search Movies</h2>
+        </div>
+    </div>
+
+    <!-- Search Form -->
+    <div class="row">
+        <div class="span12 center">
+            <form class="form-inline" method="GET" action="" id="searchForm">
+                <input name="query" id="inputQuery" type="text" class="span6" {% if query %}value="{{ query }}"{% else %}placeholder="Title"{% endif %} />
+                <button id="btnSubmit" class="btn" type="submit" title="Search"><i class="icon-search"></i></button>
+            </form>
+        </div>
+    </div>
+
+
+    {% if results %}
+    <!-- Results Statistics -->
+    <div class="row" id="resultStats">
+        <div class="span12 center">
+            <p>Found {{ paginator.count }} Movies ({{ query_time }} seconds)</p>
+        </div>
+    </div>
+
+    <!-- Result List -->
+    <div id="results">
+
+        {% for movie in results %}
+        <div class="result row">
+            <div class="span2 center">
+                {% if movie.poster %}
+                <img class="movie-thumbnail" src="{{ movie.poster.url }}" />
+                {% else %}
+                <img class="movie-thumbnail" src="{% static "img/noposter.jpg" %}" />
+                {% endif %}
+            </div>
+            <div class="span8">
+                <a href="{{ movie.get_absolute_url }}"><h4 class="movie-title">{{ movie.title }}</h4></a>
+                <ul class="movie-meta muted">
+                    <li class="movie-rating">{{ movie.rated }}</li>
+                    <li class="movie-runtime">{{ movie.runtime }}</li>
+                    <li class="sep">-</li>
+                    <ul class="movie-genres">
+                        {% for genre in movie.genres.all %}
+                            <li class="genre">{{ genre }}</li>
+                            {% if not forloop.last %}
+                                <li class="sep">&middot;</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                    <li class="sep">-</li>
+                    <li class="movie-released">{{ movie.released }}</li>
+                </ul>
+                <p class="movie-plot-simple">{{ movie.plot_simple|safe }}</p>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% if paginator.num_pages > 1 %}
+        <div class="pagination pagination-centered pagination-mini row">
+            <div class="span12">
+                <ul>
+                    {% if page_obj.has_previous %}
+                    <li><a href="?{{ pqdurl }}&page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+                    {% endif %}
+                    {% for page in paginator.page_range %}
+                    <li><a href="?{{ pqdurl }}&page={{ page }}">{{ page }}</a></li>
+                    {% endfor %}
+                    {%  if page_obj.has_next %}
+                    <li><a href="?{{ pqdurl }}&page={{  page_obj.next_page_number }}">&raquo;</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {% elif query %}
+    <!-- Results Statistics -->
+    <div class="row" id="resultStats">
+        <div class="span12 center">
+            <p>No results found for <em>&ldquo;{{ query }}&rdquo;</em></p>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
